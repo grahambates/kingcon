@@ -36,27 +36,27 @@ const unsigned int PreviewImageBGColor = 0x102030;
 #define B_1111 0xf
 #define Bits(left, right) ((B_##left) << 4) | (B_##right)
 const char hardcodedFont6x6[][6] =
-    {
-	//0
-	{Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
-	//1
-	{Bits(0001, 1100), Bits(0011, 1100), Bits(0000, 1100), Bits(0000, 1100), Bits(0000, 1100), Bits(0011, 1111)},
-	//2
-	{Bits(0001, 1110), Bits(0011, 0011), Bits(0000, 0110), Bits(0000, 1100), Bits(0001, 1000), Bits(0011, 1111)},
-	//3
-	{Bits(0001, 1110), Bits(0011, 0011), Bits(0000, 0110), Bits(0000, 0011), Bits(0011, 0011), Bits(0001, 1110)},
-	//4
-	{Bits(0011, 0110), Bits(0011, 0110), Bits(0011, 0110), Bits(0011, 1111), Bits(0000, 0110), Bits(0000, 0110)},
-	//5
-	{Bits(0011, 1111), Bits(0011, 0000), Bits(0011, 1110), Bits(0000, 0011), Bits(0011, 0011), Bits(0001, 1110)},
-	//6
-	{Bits(0001, 1111), Bits(0011, 0000), Bits(0011, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
-	//7
-	{Bits(0011, 1111), Bits(0000, 0011), Bits(0000, 0110), Bits(0000, 1100), Bits(0001, 1000), Bits(0011, 0000)},
-	//8
-	{Bits(0001, 1110), Bits(0011, 0011), Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
-	//9
-	{Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1111), Bits(0000, 0011), Bits(0011, 1110)}};
+	{
+		//0
+		{Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
+		//1
+		{Bits(0001, 1100), Bits(0011, 1100), Bits(0000, 1100), Bits(0000, 1100), Bits(0000, 1100), Bits(0011, 1111)},
+		//2
+		{Bits(0001, 1110), Bits(0011, 0011), Bits(0000, 0110), Bits(0000, 1100), Bits(0001, 1000), Bits(0011, 1111)},
+		//3
+		{Bits(0001, 1110), Bits(0011, 0011), Bits(0000, 0110), Bits(0000, 0011), Bits(0011, 0011), Bits(0001, 1110)},
+		//4
+		{Bits(0011, 0110), Bits(0011, 0110), Bits(0011, 0110), Bits(0011, 1111), Bits(0000, 0110), Bits(0000, 0110)},
+		//5
+		{Bits(0011, 1111), Bits(0011, 0000), Bits(0011, 1110), Bits(0000, 0011), Bits(0011, 0011), Bits(0001, 1110)},
+		//6
+		{Bits(0001, 1111), Bits(0011, 0000), Bits(0011, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
+		//7
+		{Bits(0011, 1111), Bits(0000, 0011), Bits(0000, 0110), Bits(0000, 1100), Bits(0001, 1000), Bits(0011, 0000)},
+		//8
+		{Bits(0001, 1110), Bits(0011, 0011), Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1110)},
+		//9
+		{Bits(0001, 1110), Bits(0011, 0011), Bits(0011, 0011), Bits(0001, 1111), Bits(0000, 0011), Bits(0011, 1110)}};
 
 const char *imageModeNames[] = {"Single Frame", "Animation", "Bob", "Monospace Font", "Proportional Font"};
 enum SaveFileType
@@ -410,8 +410,8 @@ unsigned short Convert24BitTo12Bit(unsigned long color)
 {
 	//make sure that 0xff and 0x f0 both get converted to 0xf
 	unsigned short result = ((((color & 0xff0000) >> 16) / 16) << 8) +
-				((((color & 0xff00) >> 8) / 16) << 4) +
-				((color & 0xff) / 16);
+							((((color & 0xff00) >> 8) / 16) << 4) +
+							((color & 0xff) / 16);
 	return result;
 }
 
@@ -659,10 +659,10 @@ int FindCutoutsLine(Image &image, const SourceImage &sourceImage, int rowStartY,
 			if (performBoxCheck)
 			{
 				//verify that each bob is surrounded by a box that has center points. if not, print error
-				CheckLineHorizontal(sourcePtr, sourceImage.height, sourceImagePitch, startY, startX, endX, startY, endY, false);	    //top
+				CheckLineHorizontal(sourcePtr, sourceImage.height, sourceImagePitch, startY, startX, endX, startY, endY, false);			//top
 				anchorX = CheckLineHorizontal(sourcePtr, sourceImage.height, sourceImagePitch, endY - 1, startX, endX, startY, endY, true); //bottom
 
-				CheckLineVertical(sourcePtr, sourceImage.height, sourceImagePitch, endX - 1, startX, endX, startY, endY, false);	//right
+				CheckLineVertical(sourcePtr, sourceImage.height, sourceImagePitch, endX - 1, startX, endX, startY, endY, false);		//right
 				anchorY = CheckLineVertical(sourcePtr, sourceImage.height, sourceImagePitch, startX, startX, endX, startY, endY, true); //left
 				//remove the box  order
 				startX++;
@@ -1820,7 +1820,7 @@ void SaveFiles(const Image &image, int numCutouts, const Cutout *cutouts, const 
 					for (int i = 0; i < size; i++)
 					{
 						if ((!y || actualPalette[firstIndex + i].color != actualPalettePrevious[firstIndex + i].color) &&
-						    actualPalette[firstIndex + i].color != 0xffff)
+							actualPalette[firstIndex + i].color != 0xffff)
 						{
 							copperList[copperListEntries * 2 + 0] = htons(((i + copperColorIndex) * 2) + 0x180);
 							copperList[copperListEntries * 2 + 1] = htons(actualPalette[firstIndex + i].color);
@@ -2192,9 +2192,9 @@ FIBITMAP *ExtractMaskBitmap(const SourceImage &sourceImage, const Image &image)
 				for (int x = 0; x < sourceImage.width; x++)
 				{
 					if (numBPP == 24 &&
-					    sourcePtr[x * 3] == topLeftPixelPtr[0] &&
-					    sourcePtr[x * 3 + 1] == topLeftPixelPtr[1] &&
-					    sourcePtr[x * 3 + 2] == topLeftPixelPtr[2])
+						sourcePtr[x * 3] == topLeftPixelPtr[0] &&
+						sourcePtr[x * 3 + 1] == topLeftPixelPtr[1] &&
+						sourcePtr[x * 3 + 2] == topLeftPixelPtr[2])
 						destPtr[x] = 0;
 					else
 						destPtr[x] = 255;
@@ -2403,12 +2403,12 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		Fatal("No format specified for %s", srcFileName);
 	//print what we are doing
 	printf("Converting %s, format: %s, mode: %s%s%s%s%s.\n",
-	       srcFileName,
-	       image.saver->FormatName(),
-	       imageModeNames[image.mode],
-	       image.mask ? ", creating mask" : "",
-	       image.interleaved ? ", interleaving" : "",
-	       image.saveRawPalette ? ", saving raw palette" : "", image.saveCopper ? ", saving copper palette" : "");
+		   srcFileName,
+		   image.saver->FormatName(),
+		   imageModeNames[image.mode],
+		   image.mask ? ", creating mask" : "",
+		   image.interleaved ? ", interleaving" : "",
+		   image.saveRawPalette ? ", saving raw palette" : "", image.saveCopper ? ", saving copper palette" : "");
 
 	//check for option conflicts
 	if ((image.x != 0 || image.y != 0) && (image.mode == Image::IM_Bob))
@@ -2588,7 +2588,7 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		image.sourceImages[i].width = FreeImage_GetWidth(image.sourceImages[i].bitmap);
 		image.sourceImages[i].height = FreeImage_GetHeight(image.sourceImages[i].bitmap);
 		if (image.sourceImages[i].width != image.sourceImages[0].width ||
-		    image.sourceImages[i].height != image.sourceImages[0].height)
+			image.sourceImages[i].height != image.sourceImages[0].height)
 		{
 			Fatal("Animation frames should all be same width and height");
 		}
@@ -2868,8 +2868,8 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 				for (int j = 0; j < 256; j++)
 				{
 					if (pal0[j].rgbRed != pali[j].rgbRed ||
-					    pal0[j].rgbGreen != pali[j].rgbGreen ||
-					    pal0[j].rgbBlue != pali[j].rgbBlue)
+						pal0[j].rgbGreen != pali[j].rgbGreen ||
+						pal0[j].rgbBlue != pali[j].rgbBlue)
 					{
 						Fatal("Palettes don't match up across animation frames");
 					}
