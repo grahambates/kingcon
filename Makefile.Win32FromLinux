@@ -1,0 +1,9 @@
+TARGET = kingcon
+TARGETEXTENSION = .exe
+
+FREEIMAGE_DIR = FreeImage/Dist
+CC = i686-w64-mingw32-g++
+CFLAGS  = -Wall -I$(FREEIMAGE_DIR) -L$(FREEIMAGE_DIR) --static
+LIBS = -lFreeImage -lws2_32
+
+include make.rules

@@ -6,6 +6,11 @@
 #include <math.h>
 #include <string.h>
 #include <limits.h>
+
+#if defined __WIN32
+#include <winsock2.h>
+#endif
+
 #include "FreeImage.h"
 
 #ifndef max

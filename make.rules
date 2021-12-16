@@ -1,0 +1,11 @@
+EXE = $(TARGET)$(TARGETEXTENSION)
+
+all: $(EXE)
+
+$(EXE): $(TARGET).cpp
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+clean:
+	$(RM) $(EXE)
+
+.PHONY: clean
