@@ -3283,6 +3283,7 @@ int ProcessSingleLine(int argc, char *argv[], bool isFromConversionList, int rec
 			if (parameter)
 			{
 				strncpy(tempstr, option, parameter - option);
+				tempstr[parameter - option] = '\0'; // Null terminate
 				option = tempstr;
 				parameter++;
 			}
