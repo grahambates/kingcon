@@ -5,9 +5,8 @@
 #include <errno.h>
 #include <math.h>
 #include <string.h>
+#include <limits.h>
 #include "FreeImage.h"
-
-#define MAX_PATH 1024
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -151,8 +150,8 @@ struct Data
 		CT_None,
 		CT_Image
 	};
-	char srcFileName[MAX_PATH];
-	char destFileName[MAX_PATH];
+	char srcFileName[PATH_MAX];
+	char destFileName[PATH_MAX];
 	ConverterType type;
 
 	Image image;
@@ -1010,7 +1009,7 @@ public:
 	}
 	void SaveImage(const Image &image, const char *destFileName, int numCutouts, const Cutout *cutouts) override
 	{
-		char tempstr[MAX_PATH];
+		char tempstr[PATH_MAX];
 		strcpy(tempstr, destFileName);
 		if (image.extraHalfBrite)
 		{
@@ -1235,7 +1234,7 @@ public:
 	}
 	void SaveImage(const Image &image, const char *destFileName, int numCutouts, const Cutout *cutouts) override
 	{
-		char tempstr[MAX_PATH];
+		char tempstr[PATH_MAX];
 		strcpy(tempstr, destFileName);
 		if (IsAttached())
 		{
@@ -1476,7 +1475,7 @@ public:
 	}
 	void SaveImage(const Image &image, const char *destFileName, int numCutouts, const Cutout *cutouts) override
 	{
-		char tempstr[MAX_PATH];
+		char tempstr[PATH_MAX];
 		strcpy(tempstr, destFileName);
 		strcat(tempstr, ".VFT");
 		strcat(tempstr, GetFileTypeExtension(image.mainFileType));
@@ -1699,7 +1698,7 @@ void SavePreviewImage(const Image &image, int numCutouts, const Cutout *cutouts,
 	}
 
 	//save image (_preview.bmp) or gif or tga or ???s
-	char tempstr[MAX_PATH];
+	char tempstr[PATH_MAX];
 	strcpy(tempstr, destFileName);
 	strcat(tempstr, "_preview.TGA");
 	//writer needs bottom left to be 0,0 - so flip image
@@ -1738,7 +1737,7 @@ void SaveFiles(const Image &image, int numCutouts, const Cutout *cutouts, const 
 		}
 		if (image.saveRawPalette)
 		{
-			char tempstr[MAX_PATH];
+			char tempstr[PATH_MAX];
 			strcpy(tempstr, destFileName);
 			strcat(tempstr, ".PAL");
 			strcat(tempstr, GetFileTypeExtension(image.paletteFileType));
@@ -1764,7 +1763,7 @@ void SaveFiles(const Image &image, int numCutouts, const Cutout *cutouts, const 
 				copperColorIndex = image.saver->FirstCopperColorIndex();
 			}
 
-			char tempstr[MAX_PATH];
+			char tempstr[PATH_MAX];
 			strcpy(tempstr, destFileName);
 			strcat(tempstr, ".COP");
 			strcat(tempstr, GetFileTypeExtension(image.paletteFileType));
@@ -1839,7 +1838,7 @@ void SaveFiles(const Image &image, int numCutouts, const Cutout *cutouts, const 
 
 	if (image.mode == Image::IM_Bob || image.mode == Image::IM_MonospaceFont || image.mode == Image::IM_ProportionalFont)
 	{
-		char tempstr[MAX_PATH];
+		char tempstr[PATH_MAX];
 		strcpy(tempstr, destFileName);
 		strcat(tempstr, ".BOB");
 		strcat(tempstr, GetFileTypeExtension(image.bobFileType));
@@ -1878,7 +1877,7 @@ void SaveFiles(const Image &image, int numCutouts, const Cutout *cutouts, const 
 				asciiRemapTable[*(unsigned char *)(&image.fontCharacterList[i]) + 'a' - 'A'] = i;
 		}
 
-		char tempstr[MAX_PATH];
+		char tempstr[PATH_MAX];
 		strcpy(tempstr, destFileName);
 		strcat(tempstr, ".FAR");
 		strcat(tempstr, GetFileTypeExtension(image.fontFileType));
@@ -2531,8 +2530,9 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		int firstDecimalIndex = lastDecimalIndex;
 		while (firstDecimalIndex && srcFileName[firstDecimalIndex - 1] >= '0' && srcFileName[firstDecimalIndex - 1] <= '9')
 			firstDecimalIndex--;
-		char firstHalfOfName[MAX_PATH];
+		char firstHalfOfName[PATH_MAX];
 		strncpy(firstHalfOfName, srcFileName, firstDecimalIndex);
+		firstHalfOfName[firstDecimalIndex] = '\0';
 		const char *lastHalfOfName = srcFileName + lastDecimalIndex + 1;
 
 		int animStartingNumber = 0;
@@ -2544,7 +2544,7 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		if (!image.numAnimFrames)
 		{
 			//count anim images
-			char fileName[MAX_PATH];
+			char fileName[PATH_MAX];
 			do
 			{
 				image.numAnimFrames++;
@@ -2558,7 +2558,7 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		memset(image.sourceImages, 0, sizeof(SourceImage) * image.numSourceImages);
 		for (int i = 0; i < image.numSourceImages; i++)
 		{
-			char fileName[MAX_PATH];
+			char fileName[PATH_MAX];
 			sprintf(fileName, "%s%d%s", firstHalfOfName, animStartingNumber + i, lastHalfOfName);
 			image.sourceImages[i].bitmap = GenericLoader(fileName, 0);
 			//change 0,0 to be top-left instead of bottom-left
@@ -3258,6 +3258,17 @@ int ProcessSingleLine(int argc, char *argv[], bool isFromConversionList, int rec
 		// if (currentArg[0] != '-' && currentArg[0] != '/')
 		if (currentArg[0] != '-')
 		{
+			// Convert Windows directory separators
+			int i = 0;
+			while (currentArg[i] != '\0')
+			{
+				if (currentArg[i] == '\\')
+				{
+					currentArg[i] = '/';
+				}
+				i++;
+			}
+
 			if (numFileNames == 0)
 			{
 				strcpy(data.srcFileName, currentArg);
