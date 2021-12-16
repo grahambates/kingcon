@@ -288,7 +288,7 @@ void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const char *message)
 	{
 		printf("%s Format\n", FreeImage_GetFormatFromFIF(fif));
 	}
-	Fatal(message);
+	Fatal("%s", message);
 }
 
 void Help()
@@ -616,7 +616,7 @@ int FindCutoutsLine(Image &image, const SourceImage &sourceImage, int rowStartY,
 		{
 			for (int k = rowStartY; k < rowEndY; k++)
 			{
-				const unsigned char *rowPtr = sourcePtr + k * sourceImagePitch + j;
+				// const unsigned char *rowPtr = sourcePtr + k * sourceImagePitch + j;
 				const unsigned char *maskRowPtr = maskPtr + k * maskImagePitch + j;
 				//note: searching upwards here???
 				if (*maskRowPtr)
@@ -636,7 +636,7 @@ int FindCutoutsLine(Image &image, const SourceImage &sourceImage, int rowStartY,
 			int endY = -1;
 			for (int k = rowStartY; k < rowEndY; k++)
 			{
-				const unsigned char *rowPtr = sourcePtr + k * sourceImagePitch;
+				// const unsigned char *rowPtr = sourcePtr + k * sourceImagePitch;
 				const unsigned char *maskRowPtr = maskPtr + k * maskImagePitch;
 				//check if row is empty, and if not, update startY and endY
 				for (int l = startX; l < endX; l++)
@@ -711,7 +711,7 @@ int FindCutouts(Image &image, const SourceImage &sourceImage, Cutout *cutouts, i
 	int rowNo = 0;
 	for (int i = 0; i < sourceImage.height + 1; i++)
 	{
-		const unsigned char *rowPtr = FreeImage_GetScanLine(sourceImage.bitmap, i);
+		// const unsigned char *rowPtr = FreeImage_GetScanLine(sourceImage.bitmap, i);
 		const unsigned char *maskRowPtr = FreeImage_GetScanLine(sourceImage.maskBitmap, i);
 		//scan top to bottom which rows are not empty to find where cutouts start, then find out first empty row where the where cutouts end
 		bool isRowEmpty = true;
@@ -769,7 +769,7 @@ const char *GetFileTypeExtension(SaveFileType saveFileType)
 bool FileExists(const char *fileName)
 {
 	FILE *handle;
-	if (handle = fopen(fileName, "rb"))
+	if ((handle = fopen(fileName, "rb")))
 	{
 		fclose(handle);
 		return true;
@@ -857,21 +857,21 @@ void FileWrite(const void *ptr, size_t size, FILE *handle, const char *fileName,
 			{
 				if (!curPosInFile)
 				{
-					sprintf(outputBufferTemp, formatStringFirstLineStart);
+					sprintf(outputBufferTemp, "%s", formatStringFirstLineStart);
 					curPosInFile = 1;
 				}
 				else if (!i)
 				{
-					sprintf(outputBufferTemp, formatStringFirstLineStartInBlock);
+					sprintf(outputBufferTemp, "%s", formatStringFirstLineStartInBlock);
 				}
 				else
 				{
-					sprintf(outputBufferTemp, formatStringLineStart);
+					sprintf(outputBufferTemp, "%s", formatStringLineStart);
 				}
 			}
 			else
 			{
-				sprintf(outputBufferTemp, formatStringSeparator);
+				sprintf(outputBufferTemp, "%s", formatStringSeparator);
 			}
 			outputBufferTemp += strlen(outputBufferTemp);
 
@@ -886,7 +886,7 @@ void FileWrite(const void *ptr, size_t size, FILE *handle, const char *fileName,
 			Fatal("Internal error: Buffer overrun in FileWrite to %s", fileName);
 		if (fwrite(outputBuffer, 1, outputBufferTemp - outputBuffer, handle) != (unsigned int)(outputBufferTemp - outputBuffer))
 			Fatal("Couldn't write to %s", fileName);
-		delete outputBuffer;
+		delete[] outputBuffer;
 	}
 }
 void FileClose(FILE *handle, const char *fileName)
@@ -1438,7 +1438,7 @@ public:
 				char colorIndex = sourcePtr[sourceImagePitch * y];
 				if (colorIndex != previousColorIndex)
 				{
-					int pixelColorDifference = colorIndex ^ previousColorIndex;
+					// int pixelColorDifference = colorIndex ^ previousColorIndex;
 					tempFillTableLine->entries[tempFillTableLine->header.numEntries].position = y;
 					//TODO: fill table color: Store color here
 					//						tempFillTableLine->entries[tempFillTableLine->header.numEntries].color=pixelColorDifference;
@@ -2091,7 +2091,7 @@ FIBITMAP *AttemptLosslessPalletizing(SourceImage &sourceImage, const Image &imag
 		}
 
 		//store pixels
-		RGBQUAD *paletteSource = FreeImage_GetPalette(bitmap);
+		// RGBQUAD *paletteSource = FreeImage_GetPalette(bitmap);
 		//First, mark all used colors.
 		for (int y = startY; y < startY + height; y++)
 		{
@@ -2160,7 +2160,7 @@ FIBITMAP *ExtractMaskBitmap(const SourceImage &sourceImage, const Image &image)
 	{
 		if (image.saver->ReserveColor0())
 		{
-			Fatal("Image format %s requires a palletized image, as it reserves color index 0", image.saver->Format());
+			Fatal("Image format %i requires a palletized image, as it reserves color index 0", image.saver->Format());
 		}
 		if (image.mask)
 		{
@@ -2328,7 +2328,7 @@ void BuildCutoutList(Image &image, Cutout *cutouts, int &numCutouts)
 
 		//check if there are fewer or more characters than expected. This will help to make sure the font character list is valid
 		//It's not exactly precise, but it checks that all rows of characters are used by the font, so it at east indicates if things are completely off
-		int maxCharactersPerLine = 0;
+		// int maxCharactersPerLine = 0;
 		for (int i = 0; i < image.numFontLines; i++)
 		{
 			if (image.sourceImages[0].width - image.x < image.fontLineLengths[i] * image.width)
@@ -2383,11 +2383,11 @@ bool ImageHasPixels(SourceImage &sourceImage, int xStart, int yStart, int xEnd, 
 	for (int y = yStart; y <= yEnd; y++)
 	{
 
-		const unsigned char *sourcePtr = FreeImage_GetScanLine(sourceImage.bitmap, y);
+		// const unsigned char *sourcePtr = FreeImage_GetScanLine(sourceImage.bitmap, y);
 		const unsigned char *maskPtr = FreeImage_GetScanLine(sourceImage.maskBitmap, y);
 		for (int x = xStart; x <= xEnd; x++)
 		{
-			char colorIndex = sourcePtr[x];
+			// char colorIndex = sourcePtr[x];
 			if (maskPtr[x])
 				//			if (colorIndex != maskColorIndex)
 				return true;
@@ -2465,46 +2465,43 @@ void ConvertImage(const char *srcFileName, const char *destFileName, Image &imag
 		Fatal("Only up to %d bitplanes allowed", MAXBITPLANES);
 	}
 
-	if (image.fontCharacterList)
+	char *fontCharacterListConverted = image.fontCharacterList;
+	int lineLength = 0;
+	int fontCharacterListOriginal = strlen(image.fontCharacterList);
+	int convertedLength = 0;
+	for (int i = 0; i < fontCharacterListOriginal; i++)
 	{
-		char *fontCharacterListConverted = image.fontCharacterList;
-		int lineLength = 0;
-		int fontCharacterListOriginal = strlen(image.fontCharacterList);
-		int convertedLength = 0;
-		for (int i = 0; i < fontCharacterListOriginal; i++)
+		char nextChar = image.fontCharacterList[i];
+		if (nextChar == '\\')
 		{
-			char nextChar = image.fontCharacterList[i];
-			if (nextChar == '\\')
+			i++;
+			nextChar = image.fontCharacterList[i];
+			if (nextChar == 'n')
 			{
-				i++;
-				nextChar = image.fontCharacterList[i];
-				if (nextChar == 'n')
-				{
-					image.fontLineLengths[image.numFontLines] = lineLength;
-					image.numFontLines++;
-					lineLength = 0;
-					continue;
-				}
-				else if (nextChar == '\\')
-				{
-				}
-				else if (nextChar == '\'')
-				{
-					nextChar = '"';
-				}
-				else
-				{
-					Fatal("Unknown character code \\%c in font list", nextChar);
-				}
+				image.fontLineLengths[image.numFontLines] = lineLength;
+				image.numFontLines++;
+				lineLength = 0;
+				continue;
 			}
-			fontCharacterListConverted[convertedLength] = nextChar;
-			convertedLength++;
-			lineLength++;
+			else if (nextChar == '\\')
+			{
+			}
+			else if (nextChar == '\'')
+			{
+				nextChar = '"';
+			}
+			else
+			{
+				Fatal("Unknown character code \\%c in font list", nextChar);
+			}
 		}
-		image.fontLineLengths[image.numFontLines] = lineLength;
-		image.numFontLines++;
-		fontCharacterListConverted[convertedLength] = 0;
+		fontCharacterListConverted[convertedLength] = nextChar;
+		convertedLength++;
+		lineLength++;
 	}
+	image.fontLineLengths[image.numFontLines] = lineLength;
+	image.numFontLines++;
+	fontCharacterListConverted[convertedLength] = 0;
 
 	int fontCharacterListLength = strlen(image.fontCharacterList);
 	if (image.mode == Image::IM_MonospaceFont || image.mode == Image::IM_ProportionalFont)
@@ -3177,7 +3174,7 @@ int ProcessSingleLine(int argc, char *argv[], bool isFromConversionList, int rec
 		sprintf(fileName, "%s", argv[1] + 1);
 		InitTextFileReader(fileName, textReaderCurPosition, lineNumber, textReaderStartPosition);
 		char *textLine;
-		while (textLine = GetNextTextLine(textReaderCurPosition, lineNumber))
+		while ((textLine = GetNextTextLine(textReaderCurPosition, lineNumber)))
 		{
 			char *textLineAfterWhiteSpace = TrimWhiteSpace(textLine);
 			if (!textLine[0] || (textLine[0] == '/' && textLine[1] == '/'))
