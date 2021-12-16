@@ -1,12 +1,18 @@
-KingCon V1.2 - Command Line Image to Big Endian Raw Converter.
-Written by Soren Hannibal/Lemon.
+# KingCon V1.2 - Command Line Image to Big Endian Raw Converter.
 
+Written by Soren Hannibal/Lemon.
 Mac / cross platform support by Graham Bates
 
-KINGCON sourcefile destinationfile format [mode] [options...]
-or KINGCON @assetconversionlistfile
+## Usage
 
-Image Conversion Output Format
+```
+kingcon sourcefile destinationfile format [mode] [options...]
+or kingcon @assetconversionlistfile
+```
+
+## Image Conversion Output Format
+
+```
 -F/-Format=x = format
 Valid Formats are
 c=chunky (.CHK)
@@ -15,16 +21,22 @@ a[16;32;64]=attachedsprite aka 15 color sprite format(.ASP/.A32/.A64)
 1-8=bitplane format(.BPL)
 v = vertical fill table format(.VFT)
 e = extra half brite bitplane format(.EHB)
+```
 
-Image Conversion Mode
+## Image Conversion Mode
+
+```
 -A/-Anim[=numFrames] = anim mode, finds the last decimal number in the sourcefilename, and increases by one for each frame. If NumFrames is not passed in, keeps going as long as there are more frames. Generates a bob list (.BOB)
 -B/-Bob=numBobs = bob mode, cut out each bob surrounded with a box and generate a bob list with offsetx/offsety/width/height/byteoffset (.BOB)
 -N/-MonospaceFont "character list" = monospace font mode, take each font with fixed width X (and fixed height X) a font ascii remap table (.FAR) and a bob list with offsetx/offsety/width/height/byteoffset per letter (.BOB). Note: to use the character " put in the characters \'. For newline put in
 . For \ put in \\. To exclude dummy characters, use a space
 -P/-ProportionalFont "character list" = proportional font mode, uses bob convert to generate font data (.BOB). Note: to use the character " put in the characters \'. For newline put in
 . For \ put in \\. To exclude dummy characters, use a space
+```
 
-Image Conversion Options
+## Image Conversion Options
+
+```
 -G/-Gap=pixels = number of pixel lines to ignore between each font line (default=0) (only allowed in font mode)
 -X/-Left=x = start X position (default=0) (not allowed in bob mode)
 -Y/-Top=y = start Y position (default=0) (not allowed in bob mode). Note that Y=0 at top of image, not bottom!
@@ -46,5 +58,7 @@ Image Conversion Options
 -FX/-FlipX = flip the image on X (over the Y axis)
 -R/-Rotate=n = rotate the image. Rotation is applied after the graphics have been cut out of the source image. 1=90 degrees clockwise, 2=180 degrees, 3=270 degrees
 -FT/-FileType{Main;Palette;Bob;FontTable}=x = change the output file from raw to comma separated text file. Valid formats are {uchar;ushort;0xushort;0xuchar;dc.w;dc.b} (unsigned chars or shorts, either decimal or hex). adds the extension \_UChar.INL, \_UShort.INL,\_dcw.i, or \_dcb.i
+
+```
 
 Asset Conversion List Files are single-byte text files containing one or more assets to batch process. each new line is a new asset. // at the beginning of a line means that the line is commented out
