@@ -1,8 +1,9 @@
-EXE = $(TARGET)$(TARGETEXTENSION)
+EXE = build/$(TARGET)$(TARGETEXTENSION)
 
 all: $(EXE)
 
 $(EXE): $(TARGET).cpp
+	mkdir -p build
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
