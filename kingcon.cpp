@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include <limits.h>
+#include <arpa/inet.h>
 
 #if defined __WIN32
 #include <winsock2.h>

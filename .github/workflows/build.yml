@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         # os: [ubuntu-latest, macos-11, windows-latest]
-        os: [macos-11]
+        os: [ubuntu-latest, macos-11]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -22,9 +22,20 @@ jobs:
             rm /usr/local/opt/freeimage/lib/libfreeimage.dylib
         if: matrix.os == 'macos-11'
 
-      - name: Make
-        run: |
-          make
+      - name: Update packages (Linux)
+        run: sudo apt update
+        if: matrix.os == 'ubuntu-latest'
+      - name: Install Dependencies (Linux)
+        run: sudo apt install libfreeimage-dev
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Make (Linux)
+        run: make CFLAGS="-Wall"
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Make (Mac)
+        run: make
+        if: matrix.os == 'macos-11'
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
